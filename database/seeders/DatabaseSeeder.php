@@ -26,6 +26,10 @@ class DatabaseSeeder extends Seeder
             CategoriesTableSeeder::class,
             TagsTableSeeder::class,
             PostsTableSeeder::class,
+            TechnologiesTableSeeder::class,
+            TypesTableSeeder::class,
+            ProjectsTableSeeder::class,
         ]);
     }
 }
+
