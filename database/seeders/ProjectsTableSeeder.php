@@ -2,23 +2,37 @@
 
 namespace Database\Seeders;
 
-use Faker\Generator as Faker;
 use App\Models\Project;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\Technology;
+// use Illuminate\Support\Str;
 use Illuminate\Database\Seeder;
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
 class ProjectsTableSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     *
-     * @return void
-     */
+   
     public function run()
     {
-        foreach(config('projects') as $objProject) {
+        // $technologies = Technology::all();
+        foreach (config('projects') as $objProject) {
 
-            Project::create($objProject);
+            $slug = Project::slugger($objProject['title']);
+
+            $project = Project::create([
+                'type_id' => $objProject['type_id'],
+                'title' => $objProject['title'],
+                'slug'  => $slug,
+                'author' => $objProject['author'],
+                'creation_date' => $objProject['creation_date'],
+                'last_update' => $objProject['last_update'],
+                'collaborators' => $objProject['collaborators'],
+                'description' => $objProject['description'],
+                'image'       => $objProject['image'],
+                'link_github' => $objProject['link_github'],
+                
+            ]);
+
+            $project->technologies()->sync($objProject['technologies']);
         }
     }
 }

@@ -2,10 +2,11 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\Admin\PostController;
-use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\TypeController;
+use App\Http\Controllers\Admin\ProjectController;
+use App\Http\Controllers\Admin\TechnologyController;
 use App\Http\Controllers\Admin\PageController as AdminPageController;
-use App\Http\Controllers\Guests\PageController as GuestsPageController;
+use App\Http\Controllers\Guest\PageController as GuestPageController;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,16 +19,9 @@ use App\Http\Controllers\Guests\PageController as GuestsPageController;
 |
 */
 
-Route::get('/', [GuestsPageController::class, 'home'])->name('guests.home');
 
-Route::middleware(['auth', 'verified'])
-    ->name('admin.')
-    ->prefix('admin')
-    ->group(function () {
-        Route::get('/', [AdminPageController::class, 'dashboard'])->name('dashboard');
-        Route::resource('posts', PostController::class);
-        Route::resource('categories', CategoryController::class);
-});
+Route::get('/', [GuestPageController::class, 'home'])->name('guest.home');
+
 
 Route::middleware('auth')
     ->name('admin.')
@@ -36,6 +30,22 @@ Route::middleware('auth')
         Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
         Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
         Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-});
+    });
 
-require __DIR__.'/auth.php';
+Route::middleware('auth', 'verified')
+    ->name('admin.')
+    ->prefix('admin')
+    ->group(function () {
+        Route::get('/', [AdminPageController::class, 'dashboard'])->name('dashboard');
+
+        Route::get('/project/trashed', [ProjectController::class, 'trashed'])->name('project.trashed');
+        Route::post('/project/{project}/restore', [ProjectController::class, 'restore'])->name('project.restore');
+        Route::delete('/project/{project}/harddelete', [ProjectController::class, 'harddelete'])->name('project.harddelete');
+        route::post('/project/{project}/cancel', [ProjectController::class, 'cancel'])->name('project.cancel');
+
+        Route::resource('project', ProjectController::class);
+        Route::resource('type', TypeController::class);
+        Route::resource('technology', TechnologyController::class);
+    });
+
+require __DIR__ . '/auth.php';

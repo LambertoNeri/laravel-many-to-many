@@ -1,1 +1,0 @@
-sono il footer di guests
